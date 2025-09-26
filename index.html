@@ -28,7 +28,6 @@ const baseAccountData = {
     savingsBalance: 0.00,
     transactions: [], 
     loanBalance: 0.00, 
-    // NEW STATE: Card frozen status
     isCardFrozen: false, 
     cardHolderName: null, 
     cardNumber: null,
@@ -168,7 +167,7 @@ const DashboardCard = ({ title, children, className = '' }) => (
     </div>
 );
 
-// --- Virtual Card (UPDATED with Placeholders and Freeze Overlay) ---
+// --- Virtual Card (UPDATED with Local File Paths) ---
 const VirtualCard = ({ cardHolderName, cardNumber, cardExpiry, isCardFrozen }) => {
     // Uses the stored clean number but formats it for display
     const formattedCardNumber = cardNumber ? 
@@ -196,10 +195,9 @@ const VirtualCard = ({ cardHolderName, cardNumber, cardExpiry, isCardFrozen }) =
                 <div className="flex justify-between items-start mb-4">
                     <span className="font-mono text-lg font-bold">ADAM CORP.</span>
                     <img 
-                        src="https://placehold.co/40x30/C0C0C0/333333?text=CHIP" 
-                        alt="Digital Card Chip Placeholder"
-                        className="rounded"
-                        onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/40x30/C0C0C0/333333?text=CHIP" }}
+                        src="/assets/images/card-chip.png" 
+                        alt="Card Chip"
+                        className="rounded h-auto w-10" // Added size classes for better control
                     />
                 </div>
                 
@@ -219,10 +217,9 @@ const VirtualCard = ({ cardHolderName, cardNumber, cardExpiry, isCardFrozen }) =
                         <p className="text-sm font-semibold mb-1">{cardExpiry || 'MM/YY'}</p>
                     </div>
                     <img 
-                        src="https://placehold.co/60x40/FF7F00/FFFFFF?text=NETWORK" 
-                        alt="Payment Network Logo Placeholder"
+                        src="/assets/images/payment-network.png" 
+                        alt="Payment Network Logo"
                         className="h-6 w-auto"
-                        onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/60x40/FF7F00/FFFFFF?text=NETWORK" }}
                     />
                 </div>
             </div>
@@ -231,7 +228,7 @@ const VirtualCard = ({ cardHolderName, cardNumber, cardExpiry, isCardFrozen }) =
 };
 // ------------------------------------
 
-// --- NEW Action Buttons Component ---
+// --- Action Buttons Component ---
 const ActionButtons = ({ db, userId, isCardFrozen }) => {
     const docRef = doc(db, `artifacts/${appId}/users/${userId}/adam_corp_accounts/main_account`);
     const [message, setMessage] = useState('');
@@ -272,7 +269,7 @@ const ActionButtons = ({ db, userId, isCardFrozen }) => {
                     `}
                 >
                     {isCardFrozen ? <Icons.Unlock /> : <Icons.Lock />}
-                    <span className="mt-1">{isCardFrozen ? 'Unfreeze Card' : 'Freeze Card'}</span>
+                    <span className="mt-1 text-center">{isCardFrozen ? 'Unfreeze Card' : 'Freeze Card'}</span>
                 </button>
 
                 {/* 2. Order New Physical Card Button */}
@@ -281,7 +278,7 @@ const ActionButtons = ({ db, userId, isCardFrozen }) => {
                     className="flex flex-col items-center justify-center p-3 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition duration-150 text-sm font-medium shadow-md"
                 >
                     <Icons.Card />
-                    <span className="mt-1">Order New Card</span>
+                    <span className="mt-1 text-center">Order New Card</span>
                 </button>
 
                 {/* 3. Contact Support Button */}
@@ -290,7 +287,7 @@ const ActionButtons = ({ db, userId, isCardFrozen }) => {
                     className="flex flex-col items-center justify-center p-3 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition duration-150 text-sm font-medium shadow-md"
                 >
                     <Icons.Support />
-                    <span className="mt-1">Contact Support</span>
+                    <span className="mt-1 text-center">Contact Support</span>
                 </button>
 
                 {/* 4. Make a New Account Button */}
@@ -299,7 +296,7 @@ const ActionButtons = ({ db, userId, isCardFrozen }) => {
                     className="flex flex-col items-center justify-center p-3 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition duration-150 text-sm font-medium shadow-md"
                 >
                     <Icons.Plus />
-                    <span className="mt-1">New Account</span>
+                    <span className="mt-1 text-center">New Account</span>
                 </button>
             </div>
         </DashboardCard>
@@ -307,8 +304,7 @@ const ActionButtons = ({ db, userId, isCardFrozen }) => {
 };
 // ------------------------------------
 
-
-// Account Summary Component (Updated to pass isCardFrozen to VirtualCard)
+// Account Summary Component
 const AccountSummary = ({ accountData, userId }) => (
     <div className="space-y-6 w-full">
         <VirtualCard 
@@ -476,7 +472,7 @@ const LoanFunds = ({ db, userId, accountData }) => {
 // --------------------------------------------------
 
 
-// Transfer Module Component (Logic remains the same)
+// Transfer Module Component 
 const TransferFunds = ({ db, userId, accountData }) => {
     const docRef = doc(db, `artifacts/${appId}/users/${userId}/adam_corp_accounts/main_account`);
 
@@ -577,7 +573,7 @@ const TransferFunds = ({ db, userId, accountData }) => {
     );
 };
 
-// Deposit Module Component (Logic remains the same)
+// Deposit Module Component 
 const DepositFunds = ({ db, userId, accountData }) => {
     const docRef = doc(db, `artifacts/${appId}/users/${userId}/adam_corp_accounts/main_account`);
 
@@ -641,7 +637,7 @@ const DepositFunds = ({ db, userId, accountData }) => {
     );
 };
 
-// Withdrawal Module Component (Logic remains the same)
+// Withdrawal Module Component 
 const WithdrawalFunds = ({ db, userId, accountData }) => {
     const docRef = doc(db, `artifacts/${appId}/users/${userId}/adam_corp_accounts/main_account`);
 
@@ -710,7 +706,7 @@ const WithdrawalFunds = ({ db, userId, accountData }) => {
     );
 };
 
-// Transaction History Component (Unchanged)
+// Transaction History Component 
 const TransactionHistory = ({ transactions, limit = 5 }) => {
     const displayTransactions = useMemo(() => {
         if (!transactions) return [];
@@ -771,7 +767,7 @@ const TransactionHistory = ({ transactions, limit = 5 }) => {
     );
 };
 
-// --- Card Setup/Sign-up Screen (Unchanged) ---
+// --- Card Setup/Sign-up Screen ---
 const CardSetupForm = ({ db, userId }) => {
     const [cardHolderName, setCardHolderName] = useState('');
     const [cardNumberInput, setCardNumberInput] = useState('');
@@ -1028,10 +1024,9 @@ export default function App() {
                 
                 {/* Logo Placeholder */}
                 <img 
-                    src="https://placehold.co/120x30/FFFFFF/065F46?text=ADAM+CORP+LOGO" 
-                    alt="Adam Corp Logo Placeholder"
+                    src="/assets/images/adam-corp-logo.png" 
+                    alt="Adam Corp Logo"
                     className="h-8 w-auto"
-                    onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/120x30/FFFFFF/065F46?text=ADAM+CORP+LOGO" }}
                 />
 
                 {/* Original App Title (as fallback/secondary title) */}
